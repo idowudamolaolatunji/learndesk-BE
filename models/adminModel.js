@@ -4,17 +4,13 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
         unique: true,
         validate: [validator.isEmail, "Enter a valid email"],
         lowercase: true
-    },
-    fullName: {
-        type: String,
-        required: true
     },
     password: {
         type: String,
@@ -33,24 +29,12 @@ const userSchema = new mongoose.Schema({
             message: 'Password are not the same!'
         },
     },
-    role: {
+    name: {
         type: String,
-        enum: ['instructor', 'student'],
-        default: 'student',
-        required: true
+        required: true,
+        unique: true
     },
-    isAlsoBoth: {
-        type: Boolean,
-        default: false
-    },
-    isActive: {
-        type: Boolean,
-        default: false
-    },
-    isOTPVerified: {
-        type: Boolean,
-        type: false
-    },
+
 
     createdAt: {
         type: Date,
@@ -63,7 +47,7 @@ const userSchema = new mongoose.Schema({
 
 // SCHEMA MIDDLEWARES
 const saltRound = 12;
-userSchema.pre('save', async function(next) {
+adminSchema.pre('save', async function(next) {
     // CHECK IF PASSWORD IS ALREADY MODIFIED
     if(!this.isModified('password')) return next();
 
@@ -76,21 +60,14 @@ userSchema.pre('save', async function(next) {
 });
 
 
-userSchema.pre("save", function (next) {
-    // CREATING USER SLUG
-	const slug = slugify(this.username, { lower: true });
-	this.slug = `${slug}-${this._id}`;
-	next();
-});
-
-userSchema.pre("save", async function (next) {
+adminSchema.pre("save", async function (next) {
 	if (this.isModified("password") || this.isNew) return next();
 	this.passwordChangedAt = Date.now() - 100;
 	next();
 });
 
 // INSTANCE METHOD
-userSchema.methods.changedPasswordAfter = function (jwtTimeStamp) {
+adminSchema.methods.changedPasswordAfter = function (jwtTimeStamp) {
 	if (this.passwordChangedAt) {
 		const changeTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
 		return jwtTimeStamp < changeTimeStamp;
@@ -98,11 +75,11 @@ userSchema.methods.changedPasswordAfter = function (jwtTimeStamp) {
 	// return false means not changed
 	return false;
 };
-userSchema.methods.comparePassword = async function (candidatePassword, hashedPassword) {
+adminSchema.methods.comparePassword = async function (candidatePassword, hashedPassword) {
 	const encrypted = await bcrypt.compare(candidatePassword, hashedPassword);
 	return encrypted;
 };
-userSchema.methods.createPasswordResetToken = function () {
+adminSchema.methods.createPasswordResetToken = function () {
 	// create random bytes token
 	const resetToken = crypto.randomBytes(32).toString("hex");
 
@@ -117,5 +94,5 @@ userSchema.methods.createPasswordResetToken = function () {
 };
 
 
-const User = mongoose.model('User', userSchema);
-module.exports = User;
+const Admin = mongoose.model('Admin', adminSchema);
+module.exports = Admin;

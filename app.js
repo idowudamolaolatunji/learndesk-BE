@@ -3,9 +3,11 @@ const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
+const usersRouter = require('./routes/usersRoute');
+const coursesRouter = require('./routes/coursesRoute')
+
 
 const app = express();
-
 
 // MIDDLEWARES
 app.use(express.json());
@@ -23,6 +25,8 @@ app.use((req, res, next) => {
 
 
 // MOUNTING ROUTES (middlewares also)
+app.use('/api/users', usersRouter);
+app.use('/api/courses', coursesRouter);
 
 
 module.exports = app;
