@@ -167,4 +167,56 @@ exports.adminLogin = async (req, res) => {
 }
 
 
-// ALL 
+// BECOME AN INTRUCTOR
+exports.becomeAnInstructor = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if(!user || user.role === 'instructor') {
+            return res.json({
+                message: ''
+            });
+        }
+
+        user.isAlsoBoth = true,
+        user.firstName = req.body.firstName;
+        user.lastNAme = req.body.lastNAme;
+        user.headline = req.body.headline;
+        user.biography = req.body.headline;
+        user.language = req.body.language;
+        user.website = req.body.websiteLink;
+        user.twitter = req.body.twitterLink;
+        user.facebook = req.body.facebookLink;
+        user.youtube = req.body.youtubeLink;
+        user.linkedin = req.body.linkedinLink;
+        user.save({ validateBeforeSave: true });
+
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.message
+        });
+    }
+} 
+
+
+
+// BECOME A STUDENT
+exports.becomeaStudent = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if(!user || user.role === 'student') {
+            return res.json({
+                message: ''
+            });
+        }
+
+        // PASS IN THE NECESSARY PARAMETERS FOR THE INSTUCTOR TO BECOME A STUDENT ALSO
+        
+
+    } catch(err) {
+        return res.status(400).json({
+            status: 'fail',
+            message: err.message
+        })
+    }
+}

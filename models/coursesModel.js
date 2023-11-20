@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 
 const courseSchema = new mongoose.Schema({
-    intructor: {
+    instructor: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'User',
         required: true
@@ -12,7 +12,7 @@ const courseSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    summaryTitle: {},
+    summary: {},
     description: {
         type: String,
         required: true,
@@ -98,3 +98,7 @@ courseSchema.pre(/^find/, function(next) {
 
     next();
 });
+
+
+const Course = mongoose.model('Course', courseSchema);
+module.exports = Course;
