@@ -276,3 +276,30 @@ exports.getCourseById = async (req, res) => {
 
 
 // GET COURSES BY FILTERING SPECIFIC
+exports.filtering = async (req, res) => {
+    try {
+        const filteredCourses = await Course.find({
+            category: req.body?.category,
+            difficulty: req.body?.difficulty,
+            ratings: req.body?.ratings,
+            durationInWeeks: req.body?.durationInWeeks,
+            startDate: req.body?.startDate,
+            hoursPerDay: req.body?.hoursPerDay,
+            type: req.body?.type,
+        });
+
+    } catch(err) {
+
+    }
+}
+
+/*
+category
+difficulty
+ratings
+durationInWeeks
+startDate
+hoursPerDay
+type
+
+*/
